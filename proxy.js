@@ -65,22 +65,36 @@ app.get("/top-headlines", async (req, res) => {
 });
 
 app.get("/everything", async (req, res) => {
-  const { publishedAt, q: keyword, apiKey, page, pageSize } = req.query;
+  const {
+    keyword,
+    // sources,
+    // domains,
+    apiKey,
+    page,
+    pageSize = 10,
+    from,
+    to,
+  } = req.query;
 
-  if (!keyword || !apiKey) {
+  if (keyword && apiKey) {
+    const url = `https://newsapi.org/v2/everything`;
+    const params = {
+      q: keyword,
+      //sources,
+      //domains,
+      apiKey,
+      page,
+      pageSize,
+      from,
+      to,
+    };
+
+    fetchData(url, params, res);
+  } else {
     return res
       .status(403)
       .send(
         "잘못된 접근입니다.[파라메터가 넘어오지 않았거나 올바르지 않습니다.]"
       );
   }
-  const url = `https://newsapi.org/v2/everything`;
-  const params = {
-    publishedAt,
-    q: keyword,
-    apiKey,
-    page,
-    pageSize,
-  };
-  fetchData(url, params, res);
 });
